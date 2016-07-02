@@ -6,7 +6,7 @@ namespace HXComm
     using System.IO;
     using System.Net;
     using Newtonsoft.Json.Linq;
-
+    using SimpleJSON;
     /// <summary>
     /// 环信服务器端会员访问接口Demo
     /// Author：Mr.Hu
@@ -167,6 +167,101 @@ namespace HXComm
         {
             string postData = "{\"groupname\":\"群名字\",\"desc\":\"描述\",\"public\":true,\"approval\":false,\"owner\":\"10000\",\"maxusers\":300}";
             return ReqUrl(easeMobUrl + "chatgroups", "POST", postData, token);
+        }
+
+
+        /*
+         * Path: /{org_name}/{app_name}/chatgroups/{group_id}/users/{username}
+            HTTP Method: POST
+         */
+        public string JoinGroup(string groupID, string uuid)
+        {
+            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users" + uuid,"POST",null,token);
+        }
+
+
+
+
+
+
+
+
+
+        public string SendUserInvite(string from, string to)
+        {
+            JSONClass jc = new JSONClass();
+            jc.Add("form", from);
+            return SendMsgToUser(from, to, from + " 邀请你加入新活动！", jc.ToJSON(0));
+        }
+
+        public string UserWelcome(string targetUUID)
+        {
+            string msg = "欢迎来到这里，找到小伙伴一起玩耍吧！";
+            return SendMsgToUser(null, targetUUID, msg);
+        }
+
+        public string SendMsgToUser(string from, string to, string msg, string extJson = null)
+        {
+            return SendMessage("users", new string[] { to }, "txt", msg, from, extJson);
+        }
+
+        public string SendMsgToGroup(string from, string groupID, string msg, string extJson = null)
+        {
+            return SendMessage("chatgroups", new string[] { groupID }, "txt", msg, from, extJson);
+        }
+
+        public string SendGroupWelcome(string groupID, string msg)
+        {
+            return SendMsgToGroup(null, groupID, msg);
+        }
+
+        public string SendMessageByAdmin(string targetType, string[] targetID, string msgType, string msgText, string extJson = null)
+        {
+            return SendMessage(targetType, targetID, msgType, msgText, null, extJson);
+        }
+
+        /*
+         *{
+	            "target_type":"users",     // users 给用户发消息。chatgroups 给群发消息，chatrooms 给聊天室发消息
+	            "target":["testb","testc"], // 注意这里需要用数组，数组长度建议不大于20，即使只有  
+                                            // 一个用户u1或者群组，也要用数组形式 ['u1']，给用户发  
+                                            // 送时数组元素是用户名，给群组发送时数组元素是groupid
+	            "msg":{  //消息内容
+		            "type":"txt",  // 消息类型，不局限与文本消息。任何消息类型都可以加扩展消息
+		            "msg":"消息"    // 随意传入都可以
+	            },
+	            "from":"testa",  //表示消息发送者。无此字段Server会默认设置为"from":"admin"，有from字段但值为空串("")时请求失败
+	            "ext":{   //扩展属性，由APP自己定义。可以没有这个字段，但是如果有，值不能是"ext:null"这种形式，否则出错
+		            "attr1":"v1"   // 消息的扩展内容，可以增加字段，扩展消息主要解析不分。
+	            }
+            } 
+         */
+        public string SendMessage(string targetType, string[] targetID, string msgType, string msgText, string fromUUID, string extJson = null)
+        {
+            JSONClass jc = new JSONClass();
+            jc.Add("target_type", JD(targetType));
+            JSONArray ja = new JSONArray();
+            foreach (string tID in targetID)
+            {
+                ja.Add(JD(tID));
+            }
+            jc.Add("target", ja);
+            JSONClass jmsg = new JSONClass();
+            jmsg.Add("type", JD(msgType));
+            jmsg.Add("msg", JD(msgText));
+            jc.Add("msg", jmsg);
+            if (fromUUID != null)
+                jc.Add("from", fromUUID);
+            if (extJson != null)
+                jc.Add("ext", extJson);
+
+            string postData = jc.ToJSON(0);
+            return ReqUrl(easeMobUrl + "messages", "POST", postData, token);
+        }
+
+        public static JSONData JD(object obj)
+        {
+            return Esports.space.JsonGen.JD(obj);
         }
     }
 }

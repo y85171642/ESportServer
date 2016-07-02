@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Esports.space;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +13,7 @@ namespace Esports
 
         protected void Application_Start(object sender, EventArgs e)
         {
+            SportMatchManager.instance.Start();
 
         }
 

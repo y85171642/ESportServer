@@ -21,7 +21,7 @@ namespace Esports.space
 
         private List<SportMatchGroup> groupList = new List<SportMatchGroup>();
         private List<SportMatchUser> waitingUserList = new List<SportMatchUser>();
-        private Dictionary<string, string> matchSuccessDict = new Dictionary<string, string>();
+        private Dictionary<string, string> userGroupDict = new Dictionary<string, string>();
         public void AddMatchUser(SportMatchUser condition)
         {
             Monitor.Enter(waitingUserList);
@@ -35,46 +35,42 @@ namespace Esports.space
             }
         }
 
-        public void RemoveMatchResult(string uuid)
+        public void StopMatch(string uuid)
         {
-            Monitor.Enter(matchSuccessDict);
+            Monitor.Enter(waitingUserList);
             try
             {
-                if (matchSuccessDict.ContainsKey(uuid))
-                    matchSuccessDict.Remove(uuid);
+                SportMatchUser user = waitingUserList.Find(a => { return a.uuid == uuid; });
+                if (user != null)
+                    waitingUserList.Remove(user);
             }
             finally
             {
-                Monitor.Exit(matchSuccessDict);
+                Monitor.Exit(waitingUserList);
             }
         }
 
-        /// <summary>
-        /// 轮询获取匹配结果
-        /// </summary>
-        /// <returns>GroupID</returns>
-        public SportMatchResult GetMatchResultByUser(string uuid)
+        public void RemoveFormGroup(string uuid)
         {
-            Monitor.Enter(matchSuccessDict);
+            Monitor.Enter(userGroupDict);
             try
             {
-                if (matchSuccessDict.ContainsKey(uuid))
-                    return new SportMatchResult(true, matchSuccessDict[uuid]);
-                return new SportMatchResult(false, "-1");
+                if (userGroupDict.ContainsKey(uuid))
+                    userGroupDict.Remove(uuid);
             }
             finally
             {
-                Monitor.Exit(matchSuccessDict);
+                Monitor.Exit(userGroupDict);
             }
         }
 
         public int GetUserState(string uuid)
         {
-            Monitor.Enter(matchSuccessDict);
+            Monitor.Enter(userGroupDict);
             Monitor.Enter(waitingUserList);
             try
             {
-                if (matchSuccessDict.ContainsKey(uuid))
+                if (userGroupDict.ContainsKey(uuid))
                     return 2;
                 else if (waitingUserList.Any(a => { return a.uuid == uuid; }))
                     return 1;
@@ -83,25 +79,98 @@ namespace Esports.space
             }
             finally
             {
-                Monitor.Exit(matchSuccessDict);
+                Monitor.Exit(userGroupDict);
                 Monitor.Exit(waitingUserList);
             }
         }
 
         public string GetUserGroupID(string uuid)
         {
-            Monitor.Enter(matchSuccessDict);
+            Monitor.Enter(userGroupDict);
             try
             {
-                if (matchSuccessDict.ContainsKey(uuid))
-                    return matchSuccessDict[uuid];
+                if (userGroupDict.ContainsKey(uuid))
+                    return userGroupDict[uuid];
                 return "-1";
             }
             finally
             {
-                Monitor.Exit(matchSuccessDict);
+                Monitor.Exit(userGroupDict);
             }
         }
+
+        public bool IsInGroup(string uuid)
+        {
+            Monitor.Enter(userGroupDict);
+            try
+            {
+                if (userGroupDict.ContainsKey(uuid))
+                    return true;
+                return false;
+            }
+            finally
+            {
+                Monitor.Exit(userGroupDict);
+            }
+        }
+
+        public string SolveAcceptInvite(string from, string to)
+        {
+            Monitor.Enter(waitingUserList);
+            Monitor.Enter(groupList);
+            try
+            {
+                if (IsInGroup(from))
+                {
+                    string groupID = GetUserGroupID(from);
+                    SportMatchGroup group = groupList.Find(a => { return a.groupID == groupID; });
+                    SportInvite inv = group.condition.inviteList.Find(b => { return b.fromUUID == from; });
+                    inv.isAccepted = true;
+                    return JoinGroup(to, GetUserGroupID(from));
+                }
+                else
+                {
+                    SportMatchUser user = waitingUserList.Find(a => { return a.uuid == from; });
+                    SportInvite inv = user.condition.inviteList.Find(b => { return b.fromUUID == from; });
+                    inv.isAccepted = true;
+                    return "-1";
+                }
+            }
+            finally
+            {
+                Monitor.Exit(waitingUserList);
+                Monitor.Exit(groupList);
+            }
+        }
+
+        public string JoinGroup(string uuid, string groupId)
+        {
+            Monitor.Enter(userGroupDict);
+            Monitor.Enter(waitingUserList);
+            try
+            {
+                SportMatchUser user = waitingUserList.Find(a => { return a.uuid == uuid; });
+                if (user != null)
+                    waitingUserList.Remove(user);
+                if (!userGroupDict.ContainsKey(uuid))
+                {
+                    userGroupDict.Add(uuid, groupId);
+                    XinManager.instance.JoinGroup(groupId, uuid);
+                }
+                else
+                {
+                    //TODO: 在别的群里
+                    // userGroupDict[uuid] = groupId;
+                }
+                return userGroupDict[uuid];
+            }
+            finally
+            {
+                Monitor.Exit(userGroupDict);
+                Monitor.Exit(waitingUserList);
+            }
+        }
+
 
         public void Start()
         {
@@ -140,7 +209,7 @@ namespace Esports.space
                     if (user.condition.IsMatch(group.condition))
                     {
                         group.UpdateGroupCondition(user.condition);
-                        MatchSuccess(user, group);
+                        JoinGroup(user.uuid, group.groupID);
                         break;
                     }
                 }
@@ -156,7 +225,6 @@ namespace Esports.space
                     if (user.condition.IsMatch(user2.condition))
                     {
                         SportMatchGroup group = SportMatchGroup.CreateGroup(user.condition);
-                        group.UpdateGroupCondition(user2.condition);
                         AddGroup(group);    // 创建Group
                         return;
                     }
@@ -177,31 +245,9 @@ namespace Esports.space
             }
         }
 
-
-        private void MatchSuccess(SportMatchUser user, SportMatchGroup group)
+        private void SendGroupWelcome(SportMatchGroup group, string targetUUID)
         {
-            Monitor.Enter(matchSuccessDict);
-            try
-            {
-                waitingUserList.Remove(user);
-                matchSuccessDict.Add(user.uuid, group.groupID);
-            }
-            finally
-            {
-                Monitor.Exit(matchSuccessDict);
-            }
-        }
-
-    }
-
-    public class SportMatchResult
-    {
-        public bool isSuccess;
-        public string groupID;
-        public SportMatchResult(bool isSuccess, string groupID)
-        {
-            this.isSuccess = isSuccess;
-            this.groupID = groupID;
+            XinManager.instance.GroupWelcome(group.groupID, targetUUID);
         }
     }
 
@@ -215,7 +261,12 @@ namespace Esports.space
             string groupID = CreateGroupID();
             SportMatchGroup group = new SportMatchGroup();
             group.groupID = groupID;
-            group.condition = condition;
+            SportMatchCondition condi = new SportMatchCondition();
+            condi.level = condition.level;
+            condi.location = condition.location;
+            condi.sportType = condition.sportType;
+            condi.time = condition.time;
+            group.condition = condi;
             return group;
         }
 
@@ -227,11 +278,30 @@ namespace Esports.space
             return groupId;
         }
 
-        public void UpdateGroupCondition(SportMatchCondition conditon)
+        public void UpdateGroupCondition(SportMatchCondition upCondition)
         {
             // TODO: 根据新匹配条件 更新当前匹配条件
+            UpdateGroupInivteList(upCondition);
         }
 
+        public void UpdateGroupInivteList(SportMatchCondition upCondition)
+        {
+            foreach (SportInvite si in upCondition.inviteList)
+            {
+                SportInvite inv = condition.inviteList.Find((a) => { return a.toUUID == si.toUUID; });
+                if (inv == null)
+                    condition.inviteList.Add(si);
+                else
+                    inv.isAccepted = si.isAccepted;
+
+                SendInvite(si.fromUUID, si.toUUID);
+            }
+        }
+
+        private void SendInvite(string from, string to)
+        {
+            XinManager.instance.SendInvite(from, to);
+        }
     }
 
     public class SportMatchUser
@@ -240,12 +310,21 @@ namespace Esports.space
         public SportMatchCondition condition;
     }
 
+    public class SportInvite
+    {
+        public string fromUUID;
+        public string toUUID;
+        public bool isAccepted;
+    }
+
     public class SportMatchCondition
     {
         public int sportType;
         public Location location;
         public SportTime time;
         public int level;
+
+        public List<SportInvite> inviteList = new List<SportInvite>();
 
         public bool IsMatch(SportMatchCondition condition)
         {
@@ -257,6 +336,24 @@ namespace Esports.space
                 return true;
             }
             return false;
+        }
+
+        public void SetInviteList(string from, string inviteListStr)
+        {
+            inviteListStr = inviteListStr.Trim();
+            inviteListStr = inviteListStr.Trim(',');
+            string[] inviteArray = inviteListStr.Split(',');
+            foreach (string inviteUUID in inviteArray)
+            {
+                if (!inviteList.Any(a => { return a.toUUID == inviteUUID; }))
+                {
+                    SportInvite si = new SportInvite();
+                    si.fromUUID = from;
+                    si.toUUID = inviteUUID;
+                    si.isAccepted = false;
+                    inviteList.Add(si);
+                }
+            }
         }
     }
 

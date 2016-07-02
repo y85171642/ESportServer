@@ -17,12 +17,6 @@ namespace Esports
     // [System.Web.Script.Services.ScriptService]
     public class api : System.Web.Services.WebService
     {
-        public api()
-        {
-            //init
-            SportMatchManager.instance.Start();
-        }
-
         [WebMethod(EnableSession = true)]
         //根据用户名和密码，返回用户id
         public void login(string uuid)
@@ -30,14 +24,14 @@ namespace Esports
             string huanxinUUID = "huanxin_" + uuid;
             string huanxinPWD = "huanxin_pwd_" + uuid;
 
-            string loginResut = XinManager.instance.AccountGet(huanxinUUID);
-            if (!IsLogin(loginResut))
+            string loginResut = XinManager.instance.AccountGet(uuid);
+            if (!IsRegisted(loginResut))
             {
-                loginResut = XinManager.instance.AccountCreate(huanxinUUID, huanxinPWD);
+                loginResut = XinManager.instance.AccountCreate(uuid, uuid);
             }
 
             string result = "";
-            if (!IsLogin(loginResut))
+            if (!IsRegisted(loginResut))
             {
                 result = JsonGen.Login(JsonGen.UserInfo(), 400).ToJSON(0);
             }
@@ -53,11 +47,12 @@ namespace Esports
                     SportMatchManager.instance.GetUserGroupID(uuid))
                     ).ToJSON(0);
                 Context.Session["uuid"] = uuid;
+                string ss = XinManager.instance.UserWelcome(uuid);
             }
             Send(result);
         }
 
-        bool IsLogin(string jsonResult)
+        bool IsRegisted(string jsonResult)
         {
             return jsonResult.Contains("uuid");
         }
@@ -66,31 +61,57 @@ namespace Esports
         [WebMethod(EnableSession = true)]
         public void startMatch(int type, int day, int timeStart, int timeEnd, float latitude, float longitude, int level, string invite)
         {
+            string uuid = Context.Session["uuid"].ToString();
+
             SportMatchCondition condition = new SportMatchCondition();
             condition.time = SportTime.From(day, timeStart, timeEnd);
             condition.sportType = type;
             condition.location = new Location(longitude, latitude);
             condition.level = level;
+            condition.SetInviteList(uuid, invite);
 
-            string uuid = Context.Session["uuid"].ToString();
             SportMatchUser user = new SportMatchUser();
             user.uuid = uuid;
             user.condition = condition;
-
             SportMatchManager.instance.AddMatchUser(user);
 
-            string json = JsonGen.MatchResult("-1").ToJSON(0);
-            Send(json);
+            Send(JsonGen.MatchResult("-1"));
         }
 
         [WebMethod(EnableSession = true)]
         public void getMatch()
         {
             string uuid = Context.Session["uuid"].ToString();
-            SportMatchResult result = SportMatchManager.instance.GetMatchResultByUser(uuid);
-            string groupId = result.isSuccess ? result.groupID : "-1";
-            string json = JsonGen.MatchResult(groupId).ToJSON(0);
-            Send(json);
+            string groupId = SportMatchManager.instance.GetUserGroupID(uuid);
+            Send(JsonGen.MatchResult(groupId));
+        }
+
+        [WebMethod(EnableSession = true)]
+        public void endMatch()
+        {
+            string uuid = Context.Session["uuid"].ToString();
+            SportMatchManager.instance.StopMatch(uuid);
+            Send(JsonGen.Status(100));
+        }
+
+        [WebMethod(EnableSession = true)]
+        public void accept(string inviteUID)
+        {
+            string uuid = Context.Session["uuid"].ToString();
+            if (SportMatchManager.instance.IsInGroup(uuid))
+            {
+                Send(JsonGen.Status(110));
+                return;
+            }
+
+            string groupId = SportMatchManager.instance.SolveAcceptInvite(inviteUID, uuid);
+            Send(JsonGen.Status(100));
+        }
+
+
+        public void Send(SimpleJSON.JSONClass jc)
+        {
+            Send(jc.ToJSON(0));
         }
 
         public void Send(string data)
