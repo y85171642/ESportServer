@@ -131,8 +131,10 @@
     <Compile Include="plugins\huanxin\EaseXin.cs" />
     <Compile Include="plugins\json\SimpleJSON.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="space\DVCUID.cs" />
     <Compile Include="space\HuanXinConfig.cs" />
     <Compile Include="space\JsonGen.cs" />
+    <Compile Include="space\LOG.cs" />
     <Compile Include="space\SpaceManager.cs" />
     <Compile Include="space\SportMatchManager.cs" />
     <Compile Include="space\XinManager.cs" />

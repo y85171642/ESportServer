@@ -1,0 +1,27 @@
+﻿LOGIN: fraf
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/token
+Method: POST
+ParamData: {"grant_type": "client_credentials","client_id": "YXA6UwnNQDLLEea91uHTYtu45g","client_secret": "YXA6_NLdIR8H53tCTn20g3rerCTPj90"}
+Xin ==> Response: 
+{"access_token":"YWMtCWyEUEEjEeaAPQsy-ErlAQAAAVbl9ldaVVDJiDK7lBi7_Hh6dnQHzY5P4Ko","expires_in":5183999,"application":"5309cd40-32cb-11e6-bdd6-e1d362dbb8e6"}
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10000
+Method: GET
+ParamData: 
+Xin ==> Response: 
+{
+  "action" : "get",
+  "path" : "/users",
+  "uri" : "http://a1.easemob.com/shengjie/sport/users/huanxin_10000",
+  "entities" : [ {
+    "uuid" : "ff273a4a-410d-11e6-8234-736525509fa2",
+    "type" : "user",
+    "created" : 1467543905252,
+    "modified" : 1467543905252,
+    "username" : "huanxin_10000",
+    "activated" : true
+  } ],
+  "timestamp" : 1467552941961,
+  "duration" : 9,
+  "count" : 1
+}
+Response : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10000","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10000","huanxinpassword":"huanxin_pwd_10000","state":0,"stateid":"-1"}}

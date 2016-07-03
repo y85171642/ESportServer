@@ -7,13 +7,13 @@ namespace HXComm
     using System.Net;
     using Newtonsoft.Json.Linq;
     using SimpleJSON;
-    /// <summary>
-    /// 环信服务器端会员访问接口Demo
-    /// Author：Mr.Hu
-    /// QQ:346163801
-    /// Email:346163801@qq.com
-    /// 如有任何问题，可QQ或邮箱联系
-    /// </summary>
+    using Esports.space;    /// <summary>
+                            /// 环信服务器端会员访问接口Demo
+                            /// Author：Mr.Hu
+                            /// QQ:346163801
+                            /// Email:346163801@qq.com
+                            /// 如有任何问题，可QQ或邮箱联系
+                            /// </summary>
     public class EaseXin
     {
         string reqUrlFormat = "https://a1.easemob.com/{0}/{1}/";
@@ -78,6 +78,10 @@ namespace HXComm
             return token;
         }
 
+
+
+
+
         /// <summary>
         /// 创建用户
         /// </summary>
@@ -127,6 +131,7 @@ namespace HXComm
         {
             try
             {
+                LOG.Out("Xin ==> Request: " + reqUrl + "\nMethod: " + method + "\nParamData: " + paramData);
                 HttpWebRequest request = WebRequest.Create(reqUrl) as HttpWebRequest;
                 request.Method = method.ToUpperInvariant();
 
@@ -144,12 +149,32 @@ namespace HXComm
                     using (StreamReader stream = new StreamReader(resp.GetResponseStream(), Encoding.UTF8))
                     {
                         string result = stream.ReadToEnd();
+                        LOG.Out("Xin ==> Response: " + "\n" + result);
                         return result;
                     }
                 }
             }
             catch (Exception ex) { return ex.ToString(); }
         }
+
+        /*
+         *  Path: /{org_name}/{app_name}/users/{owner_username}/contacts/users/{friend_username}
+            HTTP Method: POST
+         */
+        public string AccountAddFriend(string from, string to)
+        {
+            return ReqUrl(easeMobUrl + "users/" + from + "/contacts/users/" + to, "POST", null, token);
+        }
+
+        /*
+         *  Path: /{org_name}/{app_name}/users/{owner_username}/contacts/users
+            HTTP Method: GET
+         */
+        public string AccountGetFriends(string uuid)
+        {
+            return ReqUrl(easeMobUrl + "users/" + uuid + "/contacts/users", "GET", null, token);
+        }
+
 
         /*
          * {
@@ -174,12 +199,18 @@ namespace HXComm
          * Path: /{org_name}/{app_name}/chatgroups/{group_id}/users/{username}
             HTTP Method: POST
          */
-        public string JoinGroup(string groupID, string uuid)
+        public string GroupJoin(string groupID, string uuid)
         {
-            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users" + uuid,"POST",null,token);
+            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users/" + uuid, "POST", null, token);
         }
 
-
+        /* Path: /{org_name}/{app_name}/chatgroups/{group_id}/users/{username}
+         * HTTP Method: DELETE
+        */
+        public string GroupExit(string groupID, string uuid)
+        {
+            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users" + uuid, "DELETE", null, token);
+        }
 
 
 
@@ -253,10 +284,11 @@ namespace HXComm
             if (fromUUID != null)
                 jc.Add("from", fromUUID);
             if (extJson != null)
-                jc.Add("ext", extJson);
+                jc.Add("ext", JSON.Parse(extJson));
 
             string postData = jc.ToJSON(0);
-            return ReqUrl(easeMobUrl + "messages", "POST", postData, token);
+            string result = ReqUrl(easeMobUrl + "messages", "POST", postData, token);
+            return result;
         }
 
         public static JSONData JD(object obj)

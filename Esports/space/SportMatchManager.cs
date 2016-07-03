@@ -155,7 +155,7 @@ namespace Esports.space
                 if (!userGroupDict.ContainsKey(uuid))
                 {
                     userGroupDict.Add(uuid, groupId);
-                    XinManager.instance.JoinGroup(groupId, uuid);
+                    XinManager.instance.GroupJoin(groupId, uuid);
                 }
                 else
                 {
@@ -201,9 +201,10 @@ namespace Esports.space
 
         private void DoMatchSync()
         {
-            /// 优先Group匹配
-            foreach (SportMatchUser user in waitingUserList)
+            // 优先Group匹配
+            for (int i = waitingUserList.Count - 1; i >= 0; i--)
             {
+                SportMatchUser user = waitingUserList[i];
                 foreach (SportMatchGroup group in groupList)
                 {
                     if (user.condition.IsMatch(group.condition))

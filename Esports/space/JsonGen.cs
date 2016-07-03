@@ -18,6 +18,7 @@ namespace Esports.space
                 { 103,"未知客户端！" },
                 { 104,"原始密码不正确！" },
                 { 105,"您已更新到最新版本！" },
+                { 106,"用户不存在！" },
                 { 110,"您已经在群里，请先退出群！" },
                 { 111,"群不存在！" },
                 { 400,"其他错误" },
@@ -50,7 +51,8 @@ namespace Esports.space
             jc.Add("nickName", JD(nickName));
             jc.Add("userHandicon", JD(userHandicon));
             jc.Add("huanxinid", JD(huanxinid));
-            jc.Add("huanxinpassword", JD(huanxinpassword));
+            if (!string.IsNullOrEmpty(huanxinpassword))
+                jc.Add("huanxinpassword", JD(huanxinpassword));
             jc.Add("state", JD(state));
             jc.Add("stateid", JD(stateid));
             return jc;
