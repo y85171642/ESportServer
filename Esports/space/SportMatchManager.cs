@@ -156,6 +156,7 @@ namespace Esports.space
                 {
                     userGroupDict.Add(uuid, groupId);
                     XinManager.instance.GroupJoin(groupId, uuid);
+                    SendGroupWelcome(groupId, uuid);
                 }
                 else
                 {
@@ -246,9 +247,9 @@ namespace Esports.space
             }
         }
 
-        private void SendGroupWelcome(SportMatchGroup group, string targetUUID)
+        private void SendGroupWelcome(string groupID, string targetUUID)
         {
-            XinManager.instance.GroupWelcome(group.groupID, targetUUID);
+            XinManager.instance.GroupWelcome(groupID, targetUUID);
         }
     }
 
