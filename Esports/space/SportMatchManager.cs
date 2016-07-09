@@ -275,7 +275,7 @@ namespace Esports.space
         {
             string json = XinManager.instance.GroupCreate();
             SimpleJSON.JSONNode jn = SimpleJSON.JSON.Parse(json);
-            string groupId = jn["data"]["groupid"].ToString();
+            string groupId = jn["data"]["groupid"];
             return groupId;
         }
 

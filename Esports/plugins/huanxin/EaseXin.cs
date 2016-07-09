@@ -80,21 +80,20 @@ namespace HXComm
 
 
 
-
-
         /// <summary>
         /// 创建用户
         /// </summary>
         /// <param name="userName">账号</param>
         /// <param name="password">密码</param>
         /// <returns>创建成功的用户JSON</returns>
-        public string AccountCreate(string userName, string password)
+        public string AccountCreate(string userName, string password, string nickname = null)
         {
+            if (string.IsNullOrEmpty(nickname))
+                nickname = Esports.space.RNDNM.Rand();
             StringBuilder _build = new StringBuilder();
             _build.Append("{");
-            _build.AppendFormat("\"username\": \"{0}\",\"password\": \"{1}\"", userName, password);
+            _build.AppendFormat("\"username\": \"{0}\",\"password\": \"{1}\",\"nickname\":\"{2}\"", userName, password, nickname);
             _build.Append("}");
-
             return AccountCreate(_build.ToString());
         }
 
@@ -175,6 +174,16 @@ namespace HXComm
             return ReqUrl(easeMobUrl + "users/" + uuid + "/contacts/users", "GET", null, token);
         }
 
+        /*  Path: /{org_name}/{app_name}/users/{username}
+            HTTP Method: PUT
+            URL Params: 无
+            Request Headers: {“Authorization”:”Bearer ${token}”}
+            Request Body: {“nickname” : “${昵称值}”}
+         */
+        public string ModifyNickName(string uuid, string nickname)
+        {
+            return ReqUrl(easeMobUrl + "users/" + uuid, "PUT", "{\"nickname\":\"" + nickname + "\"}", token);
+        }
 
         /*
          * {
@@ -209,7 +218,7 @@ namespace HXComm
         */
         public string GroupExit(string groupID, string uuid)
         {
-            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users" + uuid, "DELETE", null, token);
+            return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users/" + uuid, "DELETE", null, token);
         }
 
 

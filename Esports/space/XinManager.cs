@@ -46,6 +46,11 @@ namespace Esports.space
             return m_xin.AccountGetFriends("huanxin_" + uuid);
         }
 
+        public string ModifyName(string uuid, string nickname)
+        {
+            return m_xin.ModifyNickName(uuid, nickname);
+        }
+
         public string GroupCreate()
         {
             return m_xin.GroupCreate();

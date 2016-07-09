@@ -13,9 +13,9 @@ namespace Esports.space
         private static object lock_obj = new object();
         public static void Out(string text)
         {
-
             lock (lock_obj)
             {
+                text += "\n";
                 if (!File.Exists(output_path))
                     File.Create(output_path).Close();
                 StreamWriter sw = new StreamWriter(output_path, true, System.Text.Encoding.UTF8);

@@ -21,7 +21,7 @@ namespace Esports
         [WebMethod(EnableSession = true)]
         public void login(string uuid)
         {
-            LOG.Out("LOGIN: " + uuid);
+            LOG.Out("-----------------------------------> LOGIN : " + uuid + " <----------------------------------------: ");
 
             uuid = DVCUID.DeviceIDToUUID(uuid);
             string huanxinUUID = "huanxin_" + uuid;
@@ -71,7 +71,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("AddFriend: " + uuid + " ===> " + target);
+            LOG.Out("-----------------------------------> AddFriend : " + uuid + " ===> " + target + " <----------------------------------------: ");
 
             string json = XinManager.instance.AccountAddFriend(uuid, target);
             if (IsAddFriendSuccess(json))
@@ -85,7 +85,9 @@ namespace Esports
         public void getFriends()
         {
             string uuid = Context.Session["uuid"].ToString();
-            LOG.Out("GetFriends: " + uuid);
+
+            LOG.Out("-----------------------------------> GetFriends : " + uuid + " <----------------------------------------: ");
+
             string json = XinManager.instance.AccountGetFriends(uuid);
             SimpleJSON.JSONArray friendArray = new SimpleJSON.JSONArray();
             SimpleJSON.JSONNode jn = SimpleJSON.JSON.Parse(json);
@@ -133,7 +135,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("StartMatch: " + uuid);
+            LOG.Out("-----------------------------------> StartMatch : " + uuid + " <----------------------------------------: ");
 
             SportMatchCondition condition = new SportMatchCondition();
             condition.time = SportTime.From(day, timeStart, timeEnd);
@@ -155,7 +157,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("GetMatch: " + uuid);
+            LOG.Out("-----------------------------------> GetMatch : " + uuid + " <----------------------------------------: ");
 
             string groupId = SportMatchManager.instance.GetUserGroupID(uuid);
             Send(JsonGen.MatchResult(groupId));
@@ -166,7 +168,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("EndMatch: " + uuid);
+            LOG.Out("-----------------------------------> EndMatch : " + uuid + " <----------------------------------------: ");
 
             SportMatchManager.instance.StopMatch(uuid);
             Send(JsonGen.Status(100));
@@ -177,7 +179,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("EndSport: " + uuid);
+            LOG.Out("-----------------------------------> EndSport : " + uuid + " <----------------------------------------: ");
 
             if (SportMatchManager.instance.IsInGroup(uuid))
             {
@@ -192,7 +194,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("Accept: " + uuid);
+            LOG.Out("-----------------------------------> Accept : " + uuid + " <----------------------------------------: ");
 
             if (SportMatchManager.instance.IsInGroup(uuid))
             {
@@ -204,6 +206,16 @@ namespace Esports
             Send(JsonGen.Status(100));
         }
 
+        [WebMethod(EnableSession = true)]
+        public void modifyNickName(string nickname)
+        {
+            string uuid = Context.Session["uuid"].ToString();
+
+            LOG.Out("-----------------------------------> ModifyNickName : " + uuid + " ==> " + nickname + " <----------------------------------------: ");
+
+            XinManager.instance.ModifyName(uuid, nickname);
+            Send(JsonGen.Status(100));
+        }
 
         public void Send(SimpleJSON.JSONClass jc)
         {
@@ -212,7 +224,7 @@ namespace Esports
 
         public void Send(string data)
         {
-            LOG.Out("Response : " + data);
+            LOG.Out("=======================================> SEND : " + data + " <----------------------------------------: ");
 
             Context.Response.ContentType = "application/json";
             Context.Response.Charset = "utf-8"; //设置字符集类型
