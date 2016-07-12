@@ -1,4 +1,6 @@
 ﻿using Esports.space;
+using Esports.space.domain;
+using Esports.space.manager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +23,21 @@ namespace Esports
         [WebMethod(EnableSession = true)]
         public void login(string uuid)
         {
+            string deviceID = uuid;
+            uuid = DVCUID.DeviceIDToUUID(deviceID);
+
             LOG.Out("-----------------------------------> LOGIN : " + uuid + " <----------------------------------------: ");
 
-            uuid = DVCUID.DeviceIDToUUID(uuid);
             string huanxinUUID = "huanxin_" + uuid;
             string huanxinPWD = "huanxin_pwd_" + uuid;
 
             string loginResut = XinManager.instance.AccountGet(uuid);
             if (!IsRegisted(loginResut))
             {
-                loginResut = XinManager.instance.AccountCreate(uuid, uuid);
+                string nickname = RNDNM.Rand();
+                loginResut = XinManager.instance.AccountCreate(uuid, uuid, nickname);
                 XinManager.instance.UserWelcome(uuid);
+                UserManager.instance.AddUser(uuid, nickname, deviceID, huanxinUUID, huanxinPWD);
             }
 
             string result = "";
@@ -183,8 +189,10 @@ namespace Esports
 
             if (SportMatchManager.instance.IsInGroup(uuid))
             {
+                string groupID = SportMatchManager.instance.GetUserGroupID(uuid);
                 XinManager.instance.GroupExit(SportMatchManager.instance.GetUserGroupID(uuid), uuid);
                 SportMatchManager.instance.RemoveFormGroup(uuid);
+                SportMatchManager.instance.SendGroupExit(groupID, uuid);
             }
             Send(JsonGen.Status(100));
         }
@@ -213,8 +221,27 @@ namespace Esports
 
             LOG.Out("-----------------------------------> ModifyNickName : " + uuid + " ==> " + nickname + " <----------------------------------------: ");
 
+            UserManager.instance.ModifyName(uuid, nickname);
             XinManager.instance.ModifyName(uuid, nickname);
             Send(JsonGen.Status(100));
+        }
+
+        [WebMethod(EnableSession = true)]
+        public void destineVenue(string vid, string name, string time, string address, string latitude, string longitude)
+        {
+            string uuid = Context.Session["uuid"].ToString();
+
+            LOG.Out("-----------------------------------> DestineVenue : " + uuid + " ==> 场馆： " + vid + " <----------------------------------------: ");
+
+            Venue venue = new Venue(vid, name, time, address, latitude, longitude);
+            if (SportMatchManager.instance.DestineVenue(uuid, venue))
+            {
+                Send(JsonGen.Status(100));
+                string groupid = SportMatchManager.instance.GetUserGroupID(uuid);
+                SportMatchManager.instance.SendGroupDestineVenue(groupid, uuid);
+            }
+            else
+                Send(JsonGen.Status(120));
         }
 
         public void Send(SimpleJSON.JSONClass jc)

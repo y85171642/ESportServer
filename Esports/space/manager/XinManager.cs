@@ -31,9 +31,9 @@ namespace Esports.space
             return m_xin.AccountGet("huanxin_" + userName);
         }
 
-        public string AccountCreate(string userName, string pwd)
+        public string AccountCreate(string userName, string pwd, string nickname)
         {
-            return m_xin.AccountCreate("huanxin_" + userName, "huanxin_pwd_" + pwd);
+            return m_xin.AccountCreate("huanxin_" + userName, "huanxin_pwd_" + pwd, nickname);
         }
 
         public string AccountAddFriend(string from, string to)
@@ -68,7 +68,12 @@ namespace Esports.space
 
         public string GroupWelcome(string groupID, string targetID)
         {
-            return m_xin.SendGroupWelcome(groupID, "欢迎 " + "huanxin_" + targetID + " 加入群组！");
+            return m_xin.SendGroupNotice(groupID, "欢迎 " + "huanxin_" + targetID + " 加入群组！");
+        }
+
+        public string GroupNotice(string groupID, string msg, string extJson = null)
+        {
+            return m_xin.SendGroupNotice(groupID, msg, extJson);
         }
 
         public string SendInvite(string from, string to)

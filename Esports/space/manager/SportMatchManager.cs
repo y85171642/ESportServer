@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Esports.space.domain;
+using Esports.space.manager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using SimpleJSON;
 
 namespace Esports.space
 {
@@ -22,6 +25,14 @@ namespace Esports.space
         private List<SportMatchGroup> groupList = new List<SportMatchGroup>();
         private List<SportMatchUser> waitingUserList = new List<SportMatchUser>();
         private Dictionary<string, string> userGroupDict = new Dictionary<string, string>();
+
+        #region interface
+
+        public void Start()
+        {
+            new Thread(new ThreadStart(MatchLooper)).Start();
+        }
+
         public void AddMatchUser(SportMatchUser condition)
         {
             Monitor.Enter(waitingUserList);
@@ -156,7 +167,7 @@ namespace Esports.space
                 {
                     userGroupDict.Add(uuid, groupId);
                     XinManager.instance.GroupJoin(groupId, uuid);
-                    SendGroupWelcome(groupId, uuid);
+                    SendGroupJoin(groupId, uuid);
                 }
                 else
                 {
@@ -172,11 +183,24 @@ namespace Esports.space
             }
         }
 
-
-        public void Start()
+        public bool DestineVenue(string uuid, Venue venue)
         {
-            new Thread(new ThreadStart(MatchLooper)).Start();
+            Monitor.Enter(groupList);
+            try
+            {
+                string groupid = GetUserGroupID(uuid);
+                SportMatchGroup group = groupList.Find(a => { return a.groupID == groupid; });
+                if (group == null)
+                    return false;
+                return group.SetVenue(venue);
+            }
+            finally
+            {
+                Monitor.Exit(groupList);
+            }
         }
+
+        #endregion
 
         private void MatchLooper()
         {
@@ -247,195 +271,128 @@ namespace Esports.space
             }
         }
 
-        private void SendGroupWelcome(string groupID, string targetUUID)
-        {
-            XinManager.instance.GroupWelcome(groupID, targetUUID);
-        }
-    }
-
-    public class SportMatchGroup
-    {
-        public string groupID;
-        public SportMatchCondition condition;
-
-        public static SportMatchGroup CreateGroup(SportMatchCondition condition)
-        {
-            string groupID = CreateGroupID();
-            SportMatchGroup group = new SportMatchGroup();
-            group.groupID = groupID;
-            SportMatchCondition condi = new SportMatchCondition();
-            condi.level = condition.level;
-            condi.location = condition.location;
-            condi.sportType = condition.sportType;
-            condi.time = condition.time;
-            group.condition = condi;
-            return group;
-        }
-
-        public static string CreateGroupID()
-        {
-            string json = XinManager.instance.GroupCreate();
-            SimpleJSON.JSONNode jn = SimpleJSON.JSON.Parse(json);
-            string groupId = jn["data"]["groupid"];
-            return groupId;
-        }
-
-        public void UpdateGroupCondition(SportMatchCondition upCondition)
-        {
-            // TODO: 根据新匹配条件 更新当前匹配条件
-            UpdateGroupInivteList(upCondition);
-        }
-
-        public void UpdateGroupInivteList(SportMatchCondition upCondition)
-        {
-            foreach (SportInvite si in upCondition.inviteList)
-            {
-                SportInvite inv = condition.inviteList.Find((a) => { return a.toUUID == si.toUUID; });
-                if (inv == null)
-                    condition.inviteList.Add(si);
-                else
-                    inv.isAccepted = si.isAccepted;
-
-                SendInvite(si.fromUUID, si.toUUID);
-            }
-        }
-
-        private void SendInvite(string from, string to)
-        {
-            XinManager.instance.SendInvite(from, to);
-        }
-    }
-
-    public class SportMatchUser
-    {
-        public string uuid;
-        public SportMatchCondition condition;
-    }
-
-    public class SportInvite
-    {
-        public string fromUUID;
-        public string toUUID;
-        public bool isAccepted;
-    }
-
-    public class SportMatchCondition
-    {
-        public int sportType;
-        public Location location;
-        public SportTime time;
-        public int level;
-
-        public List<SportInvite> inviteList = new List<SportInvite>();
-
-        public bool IsMatch(SportMatchCondition condition)
-        {
-            if (sportType == condition.sportType
-                && Location.Distance(location, condition.location) < 2000
-                && time.IsOverLapWith(condition.time)
-                && Math.Abs(level - condition.level) <= 2)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public void SetInviteList(string from, string inviteListStr)
-        {
-            inviteListStr = inviteListStr.Trim();
-            inviteListStr = inviteListStr.Trim(',');
-            string[] inviteArray = inviteListStr.Split(',');
-            foreach (string inviteUUID in inviteArray)
-            {
-                if (!inviteList.Any(a => { return a.toUUID == inviteUUID; }))
-                {
-                    SportInvite si = new SportInvite();
-                    si.fromUUID = from;
-                    si.toUUID = inviteUUID;
-                    si.isAccepted = false;
-                    inviteList.Add(si);
+        /*
+         * {
+                "type": "group_info", //标记
+                "group": //group 信息
+                 { 
+                    "member": 
+                    [//成员
+                        {
+                            "uid": ""//用户id
+                        },
+                        ...
+                    ],
+                    "vid": "", //场馆id
+                    "name": "",//..名字
+                    "address": "",//..地址
+                    "time": "",//..时间
+                    "latitude": "",//..经度
+                    "longtitude": "",//..纬度
+                    "state": "",//..状态 3种状态 0 是未预订 2是预订 1是投票状态
+                    "max": ""//..最大成员数 默认10 
                 }
             }
-        }
-    }
-
-    public class Location
-    {
-        /// <summary>
-        /// 经度
-        /// </summary>
-        public float longitude;
-
-        /// <summary>
-        /// 维度
-        /// </summary>
-        public float latitude;
-
-        public Location(float lon, float lat)
+         */
+        public string GetExtJson(string groupID)
         {
-            longitude = lon;
-            latitude = lat;
-        }
+            Monitor.Enter(userGroupDict);
+            try
+            {
+                SportMatchGroup group = groupList.Find(a => { return a.groupID == groupID; });
+                Venue venue = group.venue;
 
-        public static float Distance(Location a, Location b)
-        {
-            return (float)Distance(a.latitude, a.longitude, b.latitude, b.longitude);
-        }
-
-        private const double EARTH_RADIUS = 6378.137;//地球半径
-        private static double rad(double d)
-        {
-            return d * Math.PI / 180.0;
-        }
-
-        public static double Distance(double lat1, double lng1, double lat2, double lng2)
-        {
-            double radLat1 = rad(lat1);
-            double radLat2 = rad(lat2);
-            double a = radLat1 - radLat2;
-            double b = rad(lng1) - rad(lng2);
-
-            double s = 2 * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(a / 2), 2) +
-             Math.Cos(radLat1) * Math.Cos(radLat2) * Math.Pow(Math.Sin(b / 2), 2)));
-            s = s * EARTH_RADIUS;
-            s = Math.Round(s * 10000) / 10000;
-            return s;
-        }
-    }
-
-    public class SportTime
-    {
-        public int from;
-        public int to;
-
-        /// <summary>
-        /// Create Sport Time From Week Time
-        /// </summary>
-        /// <param name="dayOfWeek">dayOfWeek</param>
-        /// <param name="from">hourOfDay</param>
-        /// <param name="to">hourOfDay</param>
-        public static SportTime From(int dayOfWeek, int from, int to)
-        {
-            SportTime st = new SportTime();
-            st.from = dayOfWeek * 24 + from;
-            st.to = dayOfWeek * 24 + to;
-            return st;
+                JSONClass jc = new JSONClass();
+                jc.Add("type", new JSONData("group_info"));
+                JSONClass jc_1 = new JSONClass();
+                JSONArray ja_1_1 = new JSONArray();
+                var itr = userGroupDict.GetEnumerator();
+                while (itr.MoveNext())
+                {
+                    string groupid = itr.Current.Value;
+                    if (groupid != groupID)
+                        continue;
+                    string uuid = itr.Current.Key;
+                    JSONClass jc_1_1_i = new JSONClass();
+                    jc_1_1_i.Add("uid", new JSONData(uuid));
+                    ja_1_1.Add(jc_1_1_i);
+                }
+                jc_1.Add("member", ja_1_1);
+                if (venue == null)
+                {
+                    jc_1.Add("vid", new JSONData(""));
+                    jc_1.Add("name", new JSONData(""));
+                    jc_1.Add("address", new JSONData(""));
+                    jc_1.Add("time", new JSONData(""));
+                    jc_1.Add("latitude", new JSONData(""));
+                    jc_1.Add("longtitude", new JSONData(""));
+                    jc_1.Add("state", new JSONData(0));
+                }
+                else
+                {
+                    jc_1.Add("vid", new JSONData(venue.id));
+                    jc_1.Add("name", new JSONData(venue.name));
+                    jc_1.Add("address", new JSONData(venue.address));
+                    jc_1.Add("time", new JSONData(venue.time));
+                    jc_1.Add("latitude", new JSONData(venue.latitude));
+                    jc_1.Add("longtitude", new JSONData(venue.longitude));
+                    jc_1.Add("state", new JSONData(2));
+                }
+                jc_1.Add("max", new JSONData(10));
+                jc.Add("group", jc_1);
+                return jc.ToJSON(0);
+            }
+            finally
+            {
+                Monitor.Exit(userGroupDict);
+            }
         }
 
-        public bool IsOverLapWith(SportTime time)
+        public void SendGroupJoin(string groupID, string targetUUID)
         {
-            return OverLapLength(time) > 0;
+            Monitor.Enter(groupList);
+            try
+            {
+                string msg = "欢迎 " + UserManager.instance.GetUserNickname(targetUUID) + " 加入群组！";
+                string ext = GetExtJson(groupID);
+                XinManager.instance.GroupNotice(groupID, msg, ext);
+            }
+            finally
+            {
+                Monitor.Exit(groupList);
+            }
         }
 
-        /// <summary>
-        /// 重合长度
-        /// </summary>
-        /// <returns></returns>
-        public int OverLapLength(SportTime time)
+        public void SendGroupDestineVenue(string groupID, string uuid)
         {
-            int maxFrom = from > time.from ? from : time.from;
-            int minTo = to > time.to ? time.to : to;
-            return minTo - maxFrom;
+            Monitor.Enter(groupList);
+            try
+            {
+                SportMatchGroup group = groupList.Find(a => { return a.groupID == groupID; });
+                string nickname = UserManager.instance.GetUserNickname(uuid);
+                string msg = nickname + "成功预订场馆。［" + group.venue.name + "］－［" + group.venue.address + "］";
+                string ext = GetExtJson(groupID);
+                XinManager.instance.GroupNotice(groupID, msg, ext);
+            }
+            finally
+            {
+                Monitor.Exit(groupList);
+            }
+        }
+
+        public void SendGroupExit(string groupID, string targetUUID)
+        {
+            Monitor.Enter(groupList);
+            try
+            {
+                string msg = UserManager.instance.GetUserNickname(targetUUID) + " 退出群组！";
+                string ext = GetExtJson(groupID);
+                XinManager.instance.GroupNotice(groupID, msg, ext);
+            }
+            finally
+            {
+                Monitor.Exit(groupList);
+            }
         }
     }
 }

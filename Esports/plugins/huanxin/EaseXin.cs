@@ -88,11 +88,12 @@ namespace HXComm
         /// <returns>创建成功的用户JSON</returns>
         public string AccountCreate(string userName, string password, string nickname = null)
         {
-            if (string.IsNullOrEmpty(nickname))
-                nickname = Esports.space.RNDNM.Rand();
             StringBuilder _build = new StringBuilder();
             _build.Append("{");
-            _build.AppendFormat("\"username\": \"{0}\",\"password\": \"{1}\",\"nickname\":\"{2}\"", userName, password, nickname);
+            if (string.IsNullOrEmpty(nickname))
+                _build.AppendFormat("\"username\": \"{0}\",\"password\": \"{1}\"", userName, password);
+            else
+                _build.AppendFormat("\"username\": \"{0}\",\"password\": \"{1}\",\"nickname\":\"{2}\"", userName, password, nickname);
             _build.Append("}");
             return AccountCreate(_build.ToString());
         }
@@ -221,12 +222,6 @@ namespace HXComm
             return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users/" + uuid, "DELETE", null, token);
         }
 
-
-
-
-
-
-
         public string SendUserInvite(string from, string to)
         {
             JSONClass jc = new JSONClass();
@@ -250,9 +245,9 @@ namespace HXComm
             return SendMessage("chatgroups", new string[] { groupID }, "txt", msg, from, extJson);
         }
 
-        public string SendGroupWelcome(string groupID, string msg)
+        public string SendGroupNotice(string groupID, string msg, string extJson = null)
         {
-            return SendMsgToGroup(null, groupID, msg);
+            return SendMsgToGroup(null, groupID, msg, extJson);
         }
 
         public string SendMessageByAdmin(string targetType, string[] targetID, string msgType, string msgText, string extJson = null)
