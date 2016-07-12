@@ -30,11 +30,13 @@ namespace Esports.space
             return jc;
         }
 
-        public static JSONClass Login(JSONClass userInfo, int statusCode = 100)
+        public static JSONClass Login(JSONClass userInfo, JSONClass groupJson, int statusCode = 100)
         {
             JSONClass jc = new JSONClass();
             jc.Add("status", Status(statusCode));
             jc.Add("userInfo", userInfo);
+            if (groupJson != null)
+                jc.Add("groupInfo", groupJson);
             return jc;
         }
 

@@ -43,19 +43,26 @@ namespace Esports
             string result = "";
             if (!IsRegisted(loginResut))
             {
-                result = JsonGen.Login(JsonGen.UserInfo(), 400).ToJSON(0);
+                result = JsonGen.Login(JsonGen.UserInfo(), null, 400).ToJSON(0);
             }
             else
             {
-                result = JsonGen.Login(JsonGen.UserInfo(
+                SimpleJSON.JSONClass userInfo = JsonGen.UserInfo(
                     uuid,
                     "nikeName",
                     "userHandicon",
                     huanxinUUID,
                     huanxinPWD,
                     SportMatchManager.instance.GetUserState(uuid),
-                    SportMatchManager.instance.GetUserGroupID(uuid))
-                    ).ToJSON(0);
+                    SportMatchManager.instance.GetUserGroupID(uuid));
+                SimpleJSON.JSONClass groupInfo = null;
+                if (SportMatchManager.instance.IsInGroup(uuid))
+                {
+                    string groupId = SportMatchManager.instance.GetUserGroupID(uuid);
+                    string gjson = SportMatchManager.instance.GetExtJson(groupId);
+                    groupInfo = SimpleJSON.JSON.Parse(gjson).AsObject;
+                }
+                result = JsonGen.Login(userInfo, groupInfo).ToJSON(0);
                 Context.Session["uuid"] = uuid;
             }
             Send(result);

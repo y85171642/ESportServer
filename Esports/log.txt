@@ -1273,3 +1273,508 @@ Xin ==> Response:
 
 =======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"218058153978233272","success":"1"} <----------------------------------------: 
 
+-----------------------------------> LOGIN : 10000 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/token
+Method: POST
+ParamData: {"grant_type": "client_credentials","client_id": "YXA6UwnNQDLLEea91uHTYtu45g","client_secret": "YXA6_NLdIR8H53tCTn20g3rerCTPj90"}
+
+Xin ==> Response: 
+{"access_token":"YWMtfZkhckhDEeaSyIlO55-pSAAAAVcUqxTpONRf-gpzXpugvhajoybAA8gHeNw","expires_in":5183999,"application":"5309cd40-32cb-11e6-bdd6-e1d362dbb8e6"}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10000
+Method: GET
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "get",
+  "path" : "/users",
+  "uri" : "http://a1.easemob.com/shengjie/sport/users/huanxin_10000",
+  "entities" : [ {
+    "uuid" : "3f789500-4841-11e6-80a5-330ad99eb566",
+    "type" : "user",
+    "created" : 1468335575632,
+    "modified" : 1468335575632,
+    "username" : "huanxin_10000",
+    "activated" : true,
+    "nickname" : "谷梁鸣玉"
+  } ],
+  "timestamp" : 1468336538907,
+  "duration" : 3,
+  "count" : 1
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10000","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10000","huanxinpassword":"huanxin_pwd_10000","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10001 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10001
+Method: GET
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "get",
+  "path" : "/users",
+  "uri" : "http://a1.easemob.com/shengjie/sport/users/huanxin_10001",
+  "entities" : [ {
+    "uuid" : "a71f76b0-4841-11e6-ab64-f1b7b17684ad",
+    "type" : "user",
+    "created" : 1468335749531,
+    "modified" : 1468335749531,
+    "username" : "huanxin_10001",
+    "activated" : true,
+    "nickname" : "祁天蓉"
+  } ],
+  "timestamp" : 1468336627626,
+  "duration" : 2,
+  "count" : 1
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10001","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10001","huanxinpassword":"huanxin_pwd_10001","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10002 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10002
+Method: GET
+ParamData: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users
+Method: POST
+ParamData: {"username": "huanxin_10002","password": "huanxin_pwd_10002","nickname":"板清逸"}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/users",
+  "uri" : "https://a1.easemob.com/shengjie/sport/users",
+  "entities" : [ {
+    "uuid" : "bdf30d50-4843-11e6-aa7c-97f1c6c4b647",
+    "type" : "user",
+    "created" : 1468336646821,
+    "modified" : 1468336646821,
+    "username" : "huanxin_10002",
+    "activated" : true,
+    "nickname" : "板清逸"
+  } ],
+  "timestamp" : 1468336646825,
+  "duration" : 2,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_10002"
+    ],"msg":{"type":"txt","msg":"欢迎来到这里，找到小伙伴一起玩耍吧！"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_10002" : "success"
+  },
+  "timestamp" : 1468336646863,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10002","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10002","huanxinpassword":"huanxin_pwd_10002","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> StartMatch : 10002 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"-1","success":"0"} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10003 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10003
+Method: GET
+ParamData: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users
+Method: POST
+ParamData: {"username": "huanxin_10003","password": "huanxin_pwd_10003","nickname":"文夏雪"}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/users",
+  "uri" : "https://a1.easemob.com/shengjie/sport/users",
+  "entities" : [ {
+    "uuid" : "dde219d0-4843-11e6-8032-41f6f8c477f4",
+    "type" : "user",
+    "created" : 1468336700397,
+    "modified" : 1468336700397,
+    "username" : "huanxin_10003",
+    "activated" : true,
+    "nickname" : "文夏雪"
+  } ],
+  "timestamp" : 1468336700401,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_10003"
+    ],"msg":{"type":"txt","msg":"欢迎来到这里，找到小伙伴一起玩耍吧！"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_10003" : "success"
+  },
+  "timestamp" : 1468336700430,
+  "duration" : 2,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10003","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10003","huanxinpassword":"huanxin_pwd_10003","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> StartMatch : 10003 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"-1","success":"0"} <----------------------------------------: 
+
+-----------------------------------> GetMatch : 10003 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"-1","success":"0"} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10004 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10004
+Method: GET
+ParamData: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users
+Method: POST
+ParamData: {"username": "huanxin_10004","password": "huanxin_pwd_10004","nickname":"勤浩气"}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/users",
+  "uri" : "https://a1.easemob.com/shengjie/sport/users",
+  "entities" : [ {
+    "uuid" : "9287d410-4844-11e6-978f-6533f11ced47",
+    "type" : "user",
+    "created" : 1468337003473,
+    "modified" : 1468337003473,
+    "username" : "huanxin_10004",
+    "activated" : true,
+    "nickname" : "勤浩气"
+  } ],
+  "timestamp" : 1468337003478,
+  "duration" : 2,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_10004"
+    ],"msg":{"type":"txt","msg":"欢迎来到这里，找到小伙伴一起玩耍吧！"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_10004" : "success"
+  },
+  "timestamp" : 1468337003511,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10004","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10004","huanxinpassword":"huanxin_pwd_10004","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> StartMatch : 10004 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"-1","success":"0"} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10002 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10002
+Method: GET
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "get",
+  "path" : "/users",
+  "uri" : "http://a1.easemob.com/shengjie/sport/users/huanxin_10002",
+  "entities" : [ {
+    "uuid" : "bdf30d50-4843-11e6-aa7c-97f1c6c4b647",
+    "type" : "user",
+    "created" : 1468336646821,
+    "modified" : 1468336646821,
+    "username" : "huanxin_10002",
+    "activated" : true,
+    "nickname" : "板清逸"
+  } ],
+  "timestamp" : 1468337031819,
+  "duration" : 2,
+  "count" : 1
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10002","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10002","huanxinpassword":"huanxin_pwd_10002","state":1,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10005 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10005
+Method: GET
+ParamData: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users
+Method: POST
+ParamData: {"username": "huanxin_10005","password": "huanxin_pwd_10005","nickname":"侨河灵"}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/users",
+  "uri" : "https://a1.easemob.com/shengjie/sport/users",
+  "entities" : [ {
+    "uuid" : "aa563050-4844-11e6-9daf-fb47002d8337",
+    "type" : "user",
+    "created" : 1468337043413,
+    "modified" : 1468337043413,
+    "username" : "huanxin_10005",
+    "activated" : true,
+    "nickname" : "侨河灵"
+  } ],
+  "timestamp" : 1468337043416,
+  "duration" : 2,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_10005"
+    ],"msg":{"type":"txt","msg":"欢迎来到这里，找到小伙伴一起玩耍吧！"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_10005" : "success"
+  },
+  "timestamp" : 1468337043444,
+  "duration" : 2,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"userInfo":{"userID":"10005","nickName":"nikeName","userHandicon":"userHandicon","huanxinid":"huanxin_10005","huanxinpassword":"huanxin_pwd_10005","state":0,"stateid":"-1"}} <----------------------------------------: 
+
+-----------------------------------> StartMatch : 10005 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"-1","success":"0"} <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/chatgroups
+Method: POST
+ParamData: {"groupname":"群名字","desc":"描述","public":true,"approval":false,"owner":"10000","maxusers":300}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "uri" : "https://a1.easemob.com/shengjie/sport",
+  "entities" : [ ],
+  "data" : {
+    "groupid" : "218065207174365636"
+  },
+  "timestamp" : 1468337062555,
+  "duration" : 29,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_1"
+    ],"msg":{"type":"txt","msg":"huanxin_10005 邀请你加入新活动！"},"from":"huanxin_10005","ext":{"form":"huanxin_10005"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_1" : "success"
+  },
+  "timestamp" : 1468337063627,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/chatgroups/218065207174365636/users/huanxin_10005
+Method: POST
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "uri" : "https://a1.easemob.com/shengjie/sport",
+  "entities" : [ ],
+  "data" : {
+    "result" : true,
+    "action" : "add_member",
+    "user" : "huanxin_10005",
+    "groupid" : "218065207174365636"
+  },
+  "timestamp" : 1468337063656,
+  "duration" : 63,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"chatgroups","target":[ 
+    "218065207174365636"
+    ],"msg":{"type":"txt","msg":"欢迎 侨河灵 加入群组！"},"ext":{"type":"group_info","group":{"member":[ 
+        {"uid":"10005"}
+        ],"vid":"","name":"","address":"","time":"","latitude":"","longtitude":"","state":0,"max":10}}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "218065207174365636" : "success"
+  },
+  "timestamp" : 1468337063755,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"users","target":[ 
+    "huanxin_1"
+    ],"msg":{"type":"txt","msg":"huanxin_10004 邀请你加入新活动！"},"from":"huanxin_10004","ext":{"form":"huanxin_10004"}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "huanxin_1" : "success"
+  },
+  "timestamp" : 1468337063807,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/chatgroups/218065207174365636/users/huanxin_10004
+Method: POST
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "uri" : "https://a1.easemob.com/shengjie/sport",
+  "entities" : [ ],
+  "data" : {
+    "result" : true,
+    "action" : "add_member",
+    "user" : "huanxin_10004",
+    "groupid" : "218065207174365636"
+  },
+  "timestamp" : 1468337063827,
+  "duration" : 61,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/messages
+Method: POST
+ParamData: {"target_type":"chatgroups","target":[ 
+    "218065207174365636"
+    ],"msg":{"type":"txt","msg":"欢迎 勤浩气 加入群组！"},"ext":{"type":"group_info","group":{"member":[ 
+        {"uid":"10005"}, 
+        {"uid":"10004"}
+        ],"vid":"","name":"","address":"","time":"","latitude":"","longtitude":"","state":0,"max":10}}}
+
+Xin ==> Response: 
+{
+  "action" : "post",
+  "application" : "5309cd40-32cb-11e6-bdd6-e1d362dbb8e6",
+  "path" : "/messages",
+  "uri" : "https://a1.easemob.com/shengjie/sport/messages",
+  "data" : {
+    "218065207174365636" : "success"
+  },
+  "timestamp" : 1468337063918,
+  "duration" : 0,
+  "organization" : "shengjie",
+  "applicationName" : "sport"
+}
+
+-----------------------------------> GetMatch : 10005 <----------------------------------------: 
+
+=======================================> SEND : {"status":{"code":100,"message":"操作成功"},"id":"218065207174365636","success":"1"} <----------------------------------------: 
+
+-----------------------------------> LOGIN : 10005 <----------------------------------------: 
+
+Xin ==> Request: https://a1.easemob.com/shengjie/sport/users/huanxin_10005
+Method: GET
+ParamData: 
+
+Xin ==> Response: 
+{
+  "action" : "get",
+  "path" : "/users",
+  "uri" : "http://a1.easemob.com/shengjie/sport/users/huanxin_10005",
+  "entities" : [ {
+    "uuid" : "aa563050-4844-11e6-9daf-fb47002d8337",
+    "type" : "user",
+    "created" : 1468337043413,
+    "modified" : 1468337043413,
+    "username" : "huanxin_10005",
+    "activated" : true,
+    "nickname" : "侨河灵"
+  } ],
+  "timestamp" : 1468337092501,
+  "duration" : 1,
+  "count" : 1
+}
+
