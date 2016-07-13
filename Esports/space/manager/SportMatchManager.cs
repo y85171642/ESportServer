@@ -75,6 +75,31 @@ namespace Esports.space
             }
         }
 
+        public bool CheckGroupDismiss(string groupID)
+        {
+            Monitor.Enter(userGroupDict);
+            Monitor.Enter(groupList);
+            try
+            {
+                var itr = userGroupDict.GetEnumerator();
+                while (itr.MoveNext())
+                {
+                    if (itr.Current.Value == groupID)
+                        return false;
+                }
+                SportMatchGroup group = groupList.Find(a => { return a.groupID == groupID; });
+                if (group == null)
+                    return false;
+                groupList.Remove(group);
+                return true;
+            }
+            finally
+            {
+                Monitor.Exit(userGroupDict);
+                Monitor.Exit(groupList);
+            }
+        }
+
         public int GetUserState(string uuid)
         {
             Monitor.Enter(userGroupDict);

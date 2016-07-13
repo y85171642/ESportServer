@@ -200,6 +200,7 @@ namespace Esports
                 XinManager.instance.GroupExit(SportMatchManager.instance.GetUserGroupID(uuid), uuid);
                 SportMatchManager.instance.RemoveFormGroup(uuid);
                 SportMatchManager.instance.SendGroupExit(groupID, uuid);
+                SportMatchManager.instance.CheckGroupDismiss(groupID);
             }
             Send(JsonGen.Status(100));
         }

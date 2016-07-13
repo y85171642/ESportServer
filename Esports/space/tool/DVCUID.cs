@@ -7,7 +7,7 @@ namespace Esports.space
 {
     public static class DVCUID
     {
-        static int uuidCount = 10400;
+        static int uuidCount = 10500;
         static Dictionary<string, string> deviceUUIDDict = new Dictionary<string, string>();
         public static string DeviceIDToUUID(string deviceID)
         {
