@@ -243,12 +243,32 @@ namespace Esports
             Venue venue = new Venue(vid, name, time, address, latitude, longitude);
             if (SportMatchManager.instance.DestineVenue(uuid, venue))
             {
-                Send(JsonGen.Status(100));
                 string groupid = SportMatchManager.instance.GetUserGroupID(uuid);
                 SportMatchManager.instance.SendGroupDestineVenue(groupid, uuid);
+                Send(JsonGen.Status(100));
             }
             else
                 Send(JsonGen.Status(120));
+        }
+
+        [WebMethod(EnableSession = true)]
+        public void inviteFriends(string uids)
+        {
+            string uuid = Context.Session["uuid"].ToString();
+
+            LOG.Out("-----------------------------------> InviteFriends : " + uuid + " ==> 邀请： " + uids + " <----------------------------------------: ");
+
+            uids = uids.Trim();
+            uids = uids.Trim(',');
+            string[] uidArray = uids.Split(',');
+            foreach (string uid in uidArray)
+            {
+                if (!string.IsNullOrEmpty(uid))
+                {
+                    XinManager.instance.SendInvite(uuid, uid);
+                }
+            }
+            Send(JsonGen.Status(100));
         }
 
         public void Send(SimpleJSON.JSONClass jc)
