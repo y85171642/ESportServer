@@ -222,11 +222,11 @@ namespace HXComm
             return ReqUrl(easeMobUrl + "chatgroups/" + groupID + "/users/" + uuid, "DELETE", null, token);
         }
 
-        public string SendUserInvite(string from, string to)
+        public string SendUserInvite(string from, string to,string fromUID,string fromNickname)
         {
             JSONClass jc = new JSONClass();
-            jc.Add("form", from);
-            return SendMsgToUser(from, to, from + " 邀请你加入新活动！", jc.ToJSON(0));
+            jc.Add("form", fromUID);
+            return SendMsgToUser(from, to, fromNickname + " 邀请你加入新活动！", jc.ToJSON(0));
         }
 
         public string UserWelcome(string targetUUID)

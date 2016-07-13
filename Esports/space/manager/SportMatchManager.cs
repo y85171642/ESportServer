@@ -136,14 +136,19 @@ namespace Esports.space
                     string groupID = GetUserGroupID(from);
                     SportMatchGroup group = groupList.Find(a => { return a.groupID == groupID; });
                     SportInvite inv = group.condition.inviteList.Find(b => { return b.fromUUID == from; });
-                    inv.isAccepted = true;
+                    if (inv != null) //待处理的邀请队列，群已创建后，好友邀请时不存在此项
+                        inv.isAccepted = true;
                     return JoinGroup(to, GetUserGroupID(from));
                 }
                 else
                 {
                     SportMatchUser user = waitingUserList.Find(a => { return a.uuid == from; });
-                    SportInvite inv = user.condition.inviteList.Find(b => { return b.fromUUID == from; });
-                    inv.isAccepted = true;
+                    if (user != null)
+                    {
+                        SportInvite inv = user.condition.inviteList.Find(b => { return b.fromUUID == from; });
+                        if (inv != null)
+                            inv.isAccepted = true;
+                    }
                     return "-1";
                 }
             }

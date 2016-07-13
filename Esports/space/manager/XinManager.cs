@@ -78,7 +78,8 @@ namespace Esports.space
 
         public string SendInvite(string from, string to)
         {
-            return m_xin.SendUserInvite("huanxin_" + from, "huanxin_" + to);
+            string nickname = manager.UserManager.instance.GetUserNickname(from);
+            return m_xin.SendUserInvite("huanxin_" + from, "huanxin_" + to, from, nickname);
         }
 
         public string UserWelcome(string uuid)

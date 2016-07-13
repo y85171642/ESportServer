@@ -209,7 +209,7 @@ namespace Esports
         {
             string uuid = Context.Session["uuid"].ToString();
 
-            LOG.Out("-----------------------------------> Accept : " + uuid + " <----------------------------------------: ");
+            LOG.Out("-----------------------------------> Accept : " + uuid + " from " + inviteUID + " <----------------------------------------: ");
 
             if (SportMatchManager.instance.IsInGroup(uuid))
             {
